@@ -182,7 +182,7 @@ extractTextFile.SetHandler(async (context) => {
     await File.WriteAllTextAsync(text.FullName, serialized);
 });
 
-var replaceTextSection = new Command("replace-text-section", "Imports a TEXT section in place into an archive file.");
+var replaceTextSection = new Command("replace-text-section", "Imports a TEXT section in place into an archive file.") { inputArchive, outputArchive, inText, sectionId, overwrite };
 replaceTextSection.SetHandler(async (context) => {
     var inArc = context.ParseResult.GetValueForOption(inputArchive)!;
     var outArc = context.ParseResult.GetValueForOption(outputArchive)!;
@@ -200,7 +200,8 @@ replaceTextSection.SetHandler(async (context) => {
 
     var section = sections[id];
 
-    var textTable = JsonConvert.DeserializeObject<List<string>>(text.FullName);
+    var json = await File.ReadAllTextAsync(text.FullName);
+    var textTable = JsonConvert.DeserializeObject<List<string>>(json);
 
     using (var stream = new MemoryStream())
     {
@@ -215,7 +216,7 @@ replaceTextSection.SetHandler(async (context) => {
 });
 
 // Extract a text section in the archive to JSON
-var extractTextSection = new Command("extract-text-section", "Extracts a TEXT section into human readable JSON.") { inputArchive, outputArchive, outText, overwrite, sectionId };
+var extractTextSection = new Command("extract-text-section", "Extracts a TEXT section into human readable JSON.") { inputArchive, outText, overwrite, sectionId };
 extractTextSection.SetHandler(async (context) => {
     var inArc = context.ParseResult.GetValueForOption(inputArchive)!;
     var text = context.ParseResult.GetValueForOption(outText)!;
