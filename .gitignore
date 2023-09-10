@@ -1,0 +1,6 @@
+bin/
+Dump/
+obj/
+*.arc
+*.json
+arcs/
